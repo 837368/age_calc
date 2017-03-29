@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+    <head>
+        <title>A little 'Time-Since' Calculator</title>
+        <!--
+        NOTE:
+        A little easter egg, if you so should choose to call it that:
+        You can type in the time you got sober as well. (00:00:00) format.
+        It will do the calculations as well.
+        -->
+    </head>
+    <body>
+        <h1>Sobriety Calculator</h1>
+        
+        <p>Enter your dry date: <span id="date_example">(example December 4, 2006)</span></p>
+        <form action="#" id="calculator" method="POST">
+            <input type="text" name="date_input" id="date_input"/>
+            <input type="button" name="submit" value="Do it!" onClick="getTime(true)"/>
+        </form>
+        
+        <div id="results">
+        </div>
+        
+        <script>
+												
+            function buildDisplayString(seconds, minutes, hours, days, months, years) {
+                return "<p>You have been sober for:</p><ul><li>" + years + " years</li><li>" + months + " months</li><li>" + days + " days</li><li>" + hours + " hours</li><li>" + minutes + " minutes</li><li>" + seconds + " seconds</li></ul></p><p>Congratulations!</p> ";
+                
+            }
+            
+            function getYears(todaysDate, yourDate) {
+                var years = todaysDate.getFullYear() - yourDate.getFullYear();
+                var m = todaysDate.getMonth() - yourDate.getMonth();
+                if (m < 0 || (m === 0 && todaysDate.getDate() < yourDate.getDate())) {
+                    years--;
+                }
+                return years;
+            }
+            
+            function getMonths(todaysDate, yourDate) {
+                var d1 = todaysDate;
+                var d2 = yourDate;
+                if(todaysDate < yourDate) {
+                    d1 = yourDate;
+                    d2 = todaysDate;
+                }
+                var m = (d1.getFullYear() - d2.getFullYear()) * 12 + (d1.getMonth() - d2.getMonth());
+                if (d1.getDate() < d2.getDate()) {
+                    m--;
+                }
+                return m;
+            }
+            
+            function getDays(todaysDate, yourDate) {
+            
+            }
+            
+            function getTime(setupTimer) {
+                /* Get the user input */
+                var dateInput = document.getElementById('date_input');
+                var dateValue = dateInput.value;
+                
+                /* Create the Date Objects
+                (No longer uses date.js, in spite of its coolness.) */
+                var today = new Date();
+                console.log(today);
+                var dryDate = new Date(dateValue); //JS Timestamp
+                var timeSince = today - dryDate;
+                
+                /* The calculations */
+                var seconds = Math.floor(timeSince /1000) % 60;
+                var minutes = Math.floor(timeSince / 1000/ 60) % 60;
+                var hours = Math.floor(timeSince / 1000 / 60 / 60) % 24
+                var days = Math.round(today.getDate() - dryDate.getDate());
+                var months = getMonths(today, dryDate) % 12;
+                var years = getYears(today, dryDate);
+                
+                if ( setupTimer ) {
+                	setInterval(testIntervals, 1000);
+                }
+		if ( !isNaN(timeSince) ) {
+			return document.getElementById('results').innerHTML=buildDisplayString(seconds, minutes, hours, days, months, years);
+                }
+            }
+            
+	    function testIntervals() {
+		getTime(false);
+            }
+        </script>
+    </body>
+    
+</html>
